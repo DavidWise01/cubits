@@ -1,0 +1,6 @@
+{
+  "slug": "uuu-u",
+  "seal": "514adc0242fa305e2b98cdbe1041d7f7a027441a7bb821c53f4705e94d514227",
+  "rule": "sha256(name|slug|blurb)",
+  "write": "if-missing"
+}

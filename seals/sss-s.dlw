@@ -1,0 +1,6 @@
+{
+  "slug": "sss-s",
+  "seal": "5fb766d5eb5e0f107f73eba43f83979fe3f69bd04f693cbd4f0a9a8ccfb274ce",
+  "rule": "sha256(name|slug|blurb)",
+  "write": "if-missing"
+}

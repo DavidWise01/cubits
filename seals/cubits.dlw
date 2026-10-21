@@ -1,0 +1,6 @@
+{
+  "slug": "cubits",
+  "seal": "d42f464f5a72687cdd628a62d8baa20ebcd243740cea76490897cef537651adc",
+  "rule": "sha256(name|slug|blurb)",
+  "write": "if-missing"
+}

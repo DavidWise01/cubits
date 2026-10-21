@@ -1,0 +1,6 @@
+{
+  "slug": "fff-f",
+  "seal": "c0e76bbfd3fd437383dc5679a3d5ae37e8cb056602551bac945ddb9b993db183",
+  "rule": "sha256(name|slug|blurb)",
+  "write": "if-missing"
+}

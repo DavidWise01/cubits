@@ -1,0 +1,6 @@
+{
+  "slug": "kkk-k",
+  "seal": "c10428fc48a6b8b25e30818688243edb59565a7f640e5575eb8479d24d564ddf",
+  "rule": "sha256(name|slug|blurb)",
+  "write": "if-missing"
+}

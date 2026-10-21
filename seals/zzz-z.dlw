@@ -1,0 +1,6 @@
+{
+  "slug": "zzz-z",
+  "seal": "ad00c1291265f9c71fd4edc708b9a05fced38d67c955961a751e8b5a0e70456d",
+  "rule": "sha256(name|slug|blurb)",
+  "write": "if-missing"
+}

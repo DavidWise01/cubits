@@ -1,0 +1,6 @@
+{
+  "slug": "nnn-n",
+  "seal": "082e21ae8533946eafe213418d2fad6060cb1f48409c4b1bb0a5f939e6946efb",
+  "rule": "sha256(name|slug|blurb)",
+  "write": "if-missing"
+}

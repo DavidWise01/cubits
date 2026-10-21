@@ -1,0 +1,6 @@
+{
+  "slug": "mmm-m",
+  "seal": "8fcd4bb9facd2eee5799a380c68d0967f873752a923a071b0cba9d476f579072",
+  "rule": "sha256(name|slug|blurb)",
+  "write": "if-missing"
+}

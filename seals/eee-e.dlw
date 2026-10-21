@@ -1,0 +1,6 @@
+{
+  "slug": "eee-e",
+  "seal": "ac9efb459ff995b07e0ed6a2f225a1f292cf46a22719df25ded149e7f5110a38",
+  "rule": "sha256(name|slug|blurb)",
+  "write": "if-missing"
+}

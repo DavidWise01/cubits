@@ -1,0 +1,6 @@
+{
+  "slug": "ccc-c",
+  "seal": "941c10a50606848b58e43894b04e48b02c88ce8d3c46c4a10359fcc61e3476af",
+  "rule": "sha256(name|slug|blurb)",
+  "write": "if-missing"
+}

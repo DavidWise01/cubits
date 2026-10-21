@@ -1,0 +1,6 @@
+{
+  "slug": "vvv-v",
+  "seal": "80f1f4f65f736cb4c01d03f7aabbfd816fc9efaeaa2500ba84d236760903ebfc",
+  "rule": "sha256(name|slug|blurb)",
+  "write": "if-missing"
+}

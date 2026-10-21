@@ -1,0 +1,6 @@
+{
+  "slug": "ttt-t",
+  "seal": "dd322efc163e45aac1e2295e9fb81a68f8fd027d03bb576aebc67a158f2c715d",
+  "rule": "sha256(name|slug|blurb)",
+  "write": "if-missing"
+}

@@ -1,0 +1,6 @@
+{
+  "slug": "ddd-d",
+  "seal": "202d751377ca8ccb2c042971a4f84915d76fa0edc813298e1829b1f6bdfc84e6",
+  "rule": "sha256(name|slug|blurb)",
+  "write": "if-missing"
+}

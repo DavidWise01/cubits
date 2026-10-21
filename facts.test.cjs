@@ -1,0 +1,46 @@
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
+const f = require('./facts.js');
+const data = require('./repos.json');
+function sha(t){ return crypto.createHash('sha256').update(t).digest('hex'); }
+if (data.account !== 'DavidWise01') throw Error('account');
+if (data.taken !== '2026-10-21') throw Error('taken');
+if (data.names.length !== 2142) throw Error('count ' + data.names.length);
+if (sha(data.names.join('\n')) !== f.LISTHASH) throw Error('hash');
+const sorted = data.names.slice().sort((a, b) => a.toLowerCase() < b.toLowerCase() ? -1 : a.toLowerCase() > b.toLowerCase() ? 1 : (a < b ? -1 : a > b ? 1 : 0));
+if (sorted.join('\n') !== data.names.join('\n')) throw Error('sort');
+f.factCubitNames();
+if (f.formula() !== "{{ AaaA, BbbB, CccC, DddD, EeeE, FffF, GggG, HhhH, IiiI, JjjJ, KkkK, LllL, MmmM, NnnN, OooO, PppP, QqqQ, RrrR, SssS, TttT, UuuU, VvvV, WwwW, XxxX, YyyY, ZzzZ }}") throw Error('formula');
+const hosts = f.factHosts();
+const buckets = f.factPartition(data.names);
+const expect = { '0root': 'r', oasis: 'o', mayhem: 'm', 'sapph-i-on': 's', ud0: 'u', 'DavidWise01.github.io': 'd', '1-bit-engine-v1': 'b' };
+for (const name of Object.keys(expect)) {
+  if (f.firstLetter(name) !== expect[name]) throw Error('letter ' + name);
+  if (!buckets[expect[name]].includes(name)) throw Error('missing ' + name);
+}
+let repos = 0, strokes = 0;
+for (const c of f.cubits()) {
+  repos += buckets[c.letter].length;
+  strokes += (hosts.hall[c.letter] || 0) + (hosts.account[c.letter] || 0);
+  const html = fs.readFileSync(path.join(__dirname, c.slug + '.html'));
+  if (html.includes(13)) throw Error('cr ' + c.slug);
+  const text = html.toString('utf8');
+  const blurb = 'Cubit ' + c.letter.toUpperCase() + ' holds the letter ' + c.letter + ' from 0root.ai and from davidwise01.';
+  const want = sha(c.name + '|' + c.slug + '|' + blurb);
+  const dlw = JSON.parse(fs.readFileSync(path.join(__dirname, 'seals', c.slug + '.dlw'), 'utf8'));
+  if (dlw.seal !== want || !text.includes(want)) throw Error('seal ' + c.slug);
+}
+if (repos !== 2142) throw Error('repos ' + repos);
+if (strokes !== 15) throw Error('strokes ' + strokes);
+const index = fs.readFileSync(path.join(__dirname, 'index.html'));
+if (index.includes(13)) throw Error('cr index');
+const indexText = index.toString('utf8');
+if (!indexText.includes(f.formula())) throw Error('index formula');
+if ((indexText.match(/class="card"/g) || []).length !== 26) throw Error('cards');
+const indexSeal = sha('The Twenty-Six Cubits|cubits|Twenty-six cubits, AaaA through ZzzZ, hold 0root.ai and davidwise01.');
+if (!indexText.includes(indexSeal)) throw Error('index seal');
+const facts = fs.readFileSync(path.join(__dirname, 'facts.js'));
+const hero = fs.readFileSync(path.join(__dirname, 'hero.js'));
+if (facts.includes(13) || hero.includes(13)) throw Error('cr js');
+console.log('CUBITS PASS', repos, 'repos', strokes, 'strokes', f.LISTHASH);

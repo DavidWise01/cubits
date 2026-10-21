@@ -1,0 +1,6 @@
+{
+  "slug": "iii-i",
+  "seal": "f25cc86bd29974ff9f205e65601a60b00aa28e85a92a4f831f6d14682f8dc229",
+  "rule": "sha256(name|slug|blurb)",
+  "write": "if-missing"
+}
