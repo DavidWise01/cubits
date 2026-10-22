@@ -195,11 +195,100 @@
     if (text.indexOf(String(m.taken)) === -1) throw Error("critic taken");
     return text;
   }
+  function agenticCubit(m) {
+    if (!m || !m.name || !m.letter) throw Error("agent subject");
+    if (m.repos < 0 || m.strokes < 0) throw Error("agent counts");
+    let act, line;
+    if (m.strokes === 0) {
+      act = "refuse";
+      line = "I refuse to invent a stroke for " + m.letter + ".";
+    } else if (m.repos === 0) {
+      act = "empty";
+      line = "I refuse the empty boast.";
+    } else if (m.repos >= 500) {
+      act = "count";
+      line = "I act by the count. " + m.repos + " spheres are a carpet, not a list to recite.";
+    } else if (m.repos > 24) {
+      act = "ring";
+      line = "I open another ring. The names stay in the proof.";
+    } else {
+      act = "circle";
+      line = "I keep the circle of " + m.repos + ". I do not add a sphere to look busy.";
+    }
+    const text = m.name + " accepts the act. " + line;
+    if (text.indexOf(m.name + " accepts the act.") !== 0) throw Error("agent open");
+    if (m.strokes === 0 && (act !== "refuse" || text.indexOf("refuse to invent") === -1)) throw Error("agent refuse");
+    if (m.strokes > 0 && m.repos === 0 && act !== "empty") throw Error("agent empty");
+    if (m.strokes > 0 && m.repos >= 500 && (act !== "count" || text.indexOf("carpet") === -1)) throw Error("agent carpet");
+    if (m.strokes > 0 && m.repos > 24 && m.repos < 500 && (act !== "ring" || text.indexOf("another ring") === -1)) throw Error("agent ring");
+    if (m.strokes > 0 && m.repos > 0 && m.repos <= 24 && (act !== "circle" || text.indexOf("circle of " + m.repos) === -1)) throw Error("agent circle");
+    return { act: act, text: text };
+  }
+  function agenticShelf(m) {
+    if (!m || m.cards !== 26 || !m.fullest || !m.thinnest) throw Error("agent shelf");
+    const text = "The shelf accepts the act. I point at " + m.fullest.name + " and " + m.thinnest.name + " and I draw none of them.";
+    if (text.indexOf("accepts the act.") === -1 || text.indexOf("draw none of them") === -1) throw Error("agent shelf");
+    if (text.indexOf(m.fullest.name) === -1 || text.indexOf(String(m.thinnest.name)) === -1) throw Error("agent shelf");
+    return { act: "point", text: text };
+  }
+  function regenerative(grow) {
+    if (typeof grow !== "function") throw Error("regenerative grow");
+    const a = grow();
+    const b = grow();
+    if (typeof a !== "string" || a.length < 8 || a !== b) throw Error("regenerative drift");
+    return "I grew this page again from the same numbers. The second growth matches the first.";
+  }
+  function persistentRow(kept, fresh) {
+    if (!fresh || !fresh.id || !fresh.act) throw Error("persistent id");
+    if (!(fresh.repos >= 0) || !(fresh.strokes >= 0)) throw Error("persistent fresh");
+    if (kept == null) {
+      return {
+        row: { repos: fresh.repos, strokes: fresh.strokes, act: fresh.act, visits: 1 },
+        text: "This browser had no row for " + fresh.id + ". I wrote " + fresh.repos + " public repos and " + strokePhrase(fresh.strokes) + ". The row is local. It is not the sealed list."
+      };
+    }
+    if (kept.repos !== fresh.repos || kept.strokes !== fresh.strokes || kept.act !== fresh.act) throw Error("persistent drift");
+    const prev = typeof kept.visits === "number" && kept.visits >= 0 ? kept.visits : 0;
+    const visits = prev + 1;
+    return {
+      row: { repos: fresh.repos, strokes: fresh.strokes, act: fresh.act, visits: visits },
+      text: "This browser still holds " + fresh.id + ": " + fresh.repos + " public repos and " + strokePhrase(fresh.strokes) + ". Opened " + times(visits) + " here. I did not let the row become a second list."
+    };
+  }
+  function keepRow(store, fresh) {
+    if (!store || typeof store.get !== "function" || typeof store.set !== "function") throw Error("persistent book");
+    const raw = store.get();
+    let book;
+    if (raw == null || raw === "") book = {};
+    else {
+      try { book = JSON.parse(raw); }
+      catch (e) { throw Error("persistent book"); }
+    }
+    if (!book || typeof book !== "object" || Array.isArray(book)) throw Error("persistent book");
+    const has = Object.prototype.hasOwnProperty.call(book, fresh.id);
+    const kept = has ? book[fresh.id] : null;
+    if (kept != null && (typeof kept !== "object" || typeof kept.repos !== "number" || typeof kept.strokes !== "number" || typeof kept.act !== "string")) {
+      throw Error("persistent drift");
+    }
+    const result = persistentRow(kept, fresh);
+    book[fresh.id] = result.row;
+    store.set(JSON.stringify(book));
+    let written;
+    try { written = JSON.parse(store.get()); }
+    catch (e) { throw Error("persistent book"); }
+    const row = written && written[fresh.id];
+    if (!row || row.repos !== fresh.repos || row.strokes !== fresh.strokes || row.act !== fresh.act || row.visits !== result.row.visits) {
+      throw Error("persistent drift");
+    }
+    return result.text;
+  }
   const api = {
-    LISTHASH: LISTHASH, ACCOUNT: ACCOUNT, HOSTS: HOSTS,
+    LISTHASH: LISTHASH, ACCOUNT: ACCOUNT, HOSTS: HOSTS, KEPT: "cubits-kept",
     cubits: cubits, formula: formula, factCubitNames: factCubitNames,
     factHosts: factHosts, firstLetter: firstLetter, factPartition: factPartition,
-    extremes: extremes, criticizeCubit: criticizeCubit, criticizeShelf: criticizeShelf
+    extremes: extremes, criticizeCubit: criticizeCubit, criticizeShelf: criticizeShelf,
+    agenticCubit: agenticCubit, agenticShelf: agenticShelf, regenerative: regenerative,
+    persistentRow: persistentRow, keepRow: keepRow
   };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else Object.assign(root, api);

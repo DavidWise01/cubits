@@ -44,6 +44,7 @@ li{break-inside:avoid}
 .card i{font-style:italic;color:#5f7396}
 p,li{color:#d7e3f5}
 @keyframes cubitflicker{0%,100%{opacity:1}92%{opacity:1}93%{opacity:.55}94%{opacity:1}97%{opacity:.8}98%{opacity:1}}
+button{font:inherit;letter-spacing:.12em;text-transform:uppercase;background:transparent;color:#a5e8eb;border:1px solid rgba(0,240,255,.4);border-radius:18px;padding:8px 14px;cursor:pointer}button:hover{background:rgba(0,240,255,.1)}#life h2{margin-top:16px}
 @media (prefers-reduced-motion:reduce){h1{animation:none}}
 @media (min-width:900px){.panel.neon{position:sticky;top:18px}}
 @media (max-width:720px){h1{font-size:32px;letter-spacing:.08em}#v3{height:420px}ul{columns:1}}
@@ -52,7 +53,7 @@ p,li{color:#d7e3f5}
 <body>
 <div id="wrap">
 <h1>Cubits</h1>
-<div id="sub">analytical · <b>neon</b> · AaaA through ZzzZ · 0root.ai · davidwise01</div>
+<div id="sub">analytical · <b>neon</b> · agentic · regenerative · persistent · AaaA through ZzzZ · 0root.ai · davidwise01</div>
 <div id="stage">
 <div class="panel neon"><h2>neon</h2><p class="label">{{ act || react || change }} · the shelf</p>
 <p id="formula">{{ AaaA, BbbB, CccC, DddD, EeeE, FffF, GggG, HhhH, IiiI, JjjJ, KkkK, LllL, MmmM, NnnN, OooO, PppP, QqqQ, RrrR, SssS, TttT, UuuU, VvvV, WwwW, XxxX, YyyY, ZzzZ }}</p>
@@ -84,13 +85,20 @@ p,li{color:#d7e3f5}
 <a class="card" href="yyy-y.html"><b>YyyY</b><i>letter y</i></a>
 <a class="card" href="zzz-z.html"><b>ZzzZ</b><i>letter z</i></a>
 </div>
-</div>
+<p><button id="regen" type="button">Regenerate</button></p></div>
 <div class="panel"><h2>analytical</h2><p class="label">Twenty-six cubits, AaaA through ZzzZ, hold 0root.ai and davidwise01.</p>
 <p>Twenty-six cubits. AaaA through ZzzZ. The letters of the two hosts go inside them. Each public repository sits in the cubit of its first letter.</p>
 <p><span class="tag lit">LIT</span> This page throws unless there are 26 cubits named AaaA through ZzzZ, both hosts fold with remainders <code>0.</code> and <code>01</code>, and the sealed list is covered once.</p>
 <p><span class="tag amber">AMBER</span> The sealed list is the public repositories of DavidWise01 on 2026-10-21, 2142 names. This page does not call GitHub. A later public repository is outside this capsule until the list is sealed again.</p>
 <p><span class="tag model">MODEL</span> Each cubit page draws spheres for its repos and gold cubes for its host strokes. The drawing is a picture of the count.</p>
 <p id="proof">checking…</p>
+<section id="life">
+<h2>agentic</h2><p id="agentic">checking…</p>
+<h2>regenerative</h2><p id="regenerative">checking…</p>
+<h2>persistent</h2><p id="persistent">checking…</p>
+<p><span class="tag amber">AMBER</span> The kept row lives in this browser. It is not the sealed list. A row that disagrees with a fresh read throws.</p>
+<p><span class="tag model">MODEL</span> Regenerate grows the picture again from the same count. The second growth has to match the first.</p>
+</section>
 <section id="critic"><p id="critique">checking…</p><p><span class="tag model">MODEL</span> The shelf criticizes its own page. The voice is a picture. The numbers in the criticism are checked, and a soft review throws.</p></section>
 <p><a href="https://0root.ai/">0root.ai</a> · <a href="https://github.com/DavidWise01">DavidWise01</a></p>
 <p><code>seal d42f464f5a72687cdd628a62d8baa20ebcd243740cea76490897cef537651adc</code></p>
@@ -147,6 +155,37 @@ async function sha(t){
     if(!slot) throw Error('critic missing');
     slot.textContent=note;
     if(slot.textContent!==note) throw Error('critic drift');
+    const shelfMeasure={cards:26, repos:repos, strokes:strokes, fullest:ends.fullest, thinnest:ends.thinnest, taken:data.taken};
+    const act=agenticShelf({cards:26, fullest:ends.fullest, thinnest:ends.thinnest});
+    function paintSlot(id, text){
+      const el=document.getElementById(id);
+      if(!el) throw Error(id+' missing');
+      el.textContent=text;
+      if(el.textContent!==text) throw Error(id+' drift');
+    }
+    paintSlot('agentic', act.text);
+    paintSlot('regenerative', regenerative(function(){ return note+'\n'+act.text; }));
+    paintSlot('persistent', keepRow({
+      get:function(){ return localStorage.getItem(KEPT); },
+      set:function(v){ try{ localStorage.setItem(KEPT, v); }catch(err){ throw Error('persistent book'); } }
+    }, {id:'cubits', repos:repos, strokes:strokes, act:act.act}));
+    const regen=document.getElementById('regen');
+    if(!regen) throw Error('regen missing');
+    regen.addEventListener('click', function(){
+      try{
+        const hrefs=[...document.querySelectorAll('a.card')].map(a=>a.getAttribute('href'));
+        if(hrefs.join(',')!==want.join(',')) throw Error('regenerative drift');
+        if(document.getElementById('formula').textContent!==formula()) throw Error('regenerative drift');
+        const note2=criticizeShelf(shelfMeasure);
+        const act2=agenticShelf({cards:26, fullest:ends.fullest, thinnest:ends.thinnest});
+        if(document.getElementById('critique').textContent!==note2) throw Error('regenerative drift');
+        if(document.getElementById('agentic').textContent!==act2.text) throw Error('regenerative drift');
+        paintSlot('regenerative', regenerative(function(){ return note2+'\n'+act2.text; }));
+      }catch(err){
+        paint('FAIL '+err.message, true);
+        throw err;
+      }
+    });
     paint('LIT 26 cubits hold '+repos+' public repos and '+strokes+' host strokes', false);
   }catch(e){
     paint('FAIL '+e.message, true);
@@ -154,7 +193,5 @@ async function sha(t){
   }
 })();
 </script>
-</body>
-</html>
 </body>
 </html>

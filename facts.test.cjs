@@ -65,6 +65,28 @@ for (const c of f.cubits()) {
   const headAt = html.indexOf('<h2>analytical</h2>');
   if (!(neonAt >= 0 && neonAt < v3At && v3At < headAt)) throw Error('shell ' + c.slug);
   if (!html.includes('{{ act || react || change }}')) throw Error('neon tag ' + c.slug);
+  if (!html.includes('id="agentic"') || !html.includes('id="regenerative"') || !html.includes('id="persistent"') || !html.includes('id="regen"')) throw Error('life ' + c.slug);
+  if (!html.includes('agentic · regenerative · persistent')) throw Error('life line ' + c.slug);
+  const strokesN = (hosts.hall[c.letter] || 0) + (hosts.account[c.letter] || 0);
+  const ag = f.agenticCubit({ name: c.name, letter: c.letter, repos: mine.length, strokes: strokesN });
+  if (ag.text.indexOf(c.name + ' accepts the act.') !== 0) throw Error('agent ' + c.name);
+  if (strokesN === 0 && ag.act !== 'refuse') throw Error('act ' + c.name);
+  else if (strokesN > 0 && mine.length >= 500 && ag.act !== 'count') throw Error('act ' + c.name);
+  else if (strokesN > 0 && mine.length > 24 && mine.length < 500 && ag.act !== 'ring') throw Error('act ' + c.name);
+  else if (strokesN > 0 && mine.length > 0 && mine.length <= 24 && ag.act !== 'circle') throw Error('act ' + c.name);
+  const grown = f.regenerative(function () { return ag.text; });
+  if (grown.indexOf('second growth matches') === -1) throw Error('regen ' + c.name);
+  const fresh = { id: c.name, repos: mine.length, strokes: strokesN, act: ag.act };
+  let mem = null;
+  const store = { get: function () { return mem; }, set: function (v) { mem = v; } };
+  const first = f.keepRow(store, fresh);
+  if (first.indexOf('had no row') === -1) throw Error('keep ' + c.name);
+  const second = f.keepRow(store, fresh);
+  if (second.indexOf('still holds') === -1 || second.indexOf('Opened 2 times') === -1) throw Error('kept ' + c.name);
+  let drifted = false;
+  try { f.keepRow({ get: function () { return JSON.stringify({ [c.name]: { repos: mine.length + 1, strokes: strokesN, act: ag.act, visits: 1 } }); }, set: function () { throw Error('wrote drift'); } }, fresh); }
+  catch (e) { drifted = e.message === 'persistent drift'; }
+  if (!drifted) throw Error('drift ' + c.name);
 }
 if (!indexText.includes('id="critique"')) throw Error('index critic');
 if (!indexText.includes('<h2>analytical</h2>')) throw Error('index analytical');
@@ -74,6 +96,18 @@ const iHead = indexText.indexOf('<h2>analytical</h2>');
 const iProof = indexText.indexOf('id="proof"');
 if (!(iNeon >= 0 && iNeon < iFormula && iFormula < iHead && iHead < iProof)) throw Error('index shell');
 if (!indexText.includes('{{ act || react || change }}')) throw Error('index neon');
+if (!indexText.includes('id="agentic"') || !indexText.includes('id="regen"') || !indexText.includes('agentic · regenerative · persistent')) throw Error('index life');
+const shelfAct = f.agenticShelf({ cards: 26, fullest: ends.fullest, thinnest: ends.thinnest });
+if (shelfAct.act !== 'point' || shelfAct.text.indexOf('TttT') === -1 || shelfAct.text.indexOf('draw none of them') === -1) throw Error('shelf act');
+let flipped = 0;
+let regenThrew = false;
+try { f.regenerative(function () { return 'grow-' + (flipped++); }); }
+catch (e) { regenThrew = e.message === 'regenerative drift'; }
+if (!regenThrew) throw Error('regen soft');
+let bookThrew = false;
+try { f.keepRow({ get: function () { return '{'; }, set: function () {} }, { id: 'AaaA', repos: 1, strokes: 0, act: 'refuse' }); }
+catch (e) { bookThrew = e.message === 'persistent book'; }
+if (!bookThrew) throw Error('book soft');
 const still = f.criticizeCubit({
   name: 'XxxX', letter: 'x', repos: buckets.x.length, strokes: 0, hall: 0, account: 0,
   total: 2142, names: buckets.x, still: true

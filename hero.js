@@ -54,55 +54,73 @@ function hero(n, strokes) {
   scene.add(floor);
   const hue = (letter.charCodeAt(0) - 97) / 26;
   const color = new THREE.Color().setHSL(hue, 0.62, 0.62);
-  let sphereCount = 0;
-  if (n > 0) {
-    const mesh = new THREE.InstancedMesh(
-      new THREE.SphereGeometry(0.16, 16, 12),
-      new THREE.MeshStandardMaterial({ color: color, emissive: color, emissiveIntensity: 0.35, roughness: 0.4, metalness: 0.08 }),
-      n
-    );
-    const dummy = new THREE.Object3D();
-    for (let i = 0; i < n; i++) {
-      const ring = Math.floor(i / 24);
-      const idx = i % 24;
-      const per = Math.min(24, n - ring * 24);
-      const a = (idx / per) * Math.PI * 2 + ring * 0.2;
-      const rr = 1.15 + ring * 0.7;
-      dummy.position.set(Math.cos(a) * rr, 0.2, Math.sin(a) * rr);
-      dummy.updateMatrix();
-      mesh.setMatrixAt(i, dummy.matrix);
-    }
-    mesh.instanceMatrix.needsUpdate = true;
-    scene.add(mesh);
-    sphereCount = mesh.count;
-  } else {
-    const ring = new THREE.Mesh(
-      new THREE.TorusGeometry(1.5, 0.05, 12, 80),
-      new THREE.MeshStandardMaterial({ color: color, roughness: 0.42, metalness: 0.18 })
-    );
-    ring.rotation.x = Math.PI / 2;
-    scene.add(ring);
+  const planted = [];
+  function drop(obj) {
+    scene.remove(obj);
+    if (obj.geometry) obj.geometry.dispose();
+    if (obj.material) obj.material.dispose();
   }
-  let cubeCount = 0;
-  if (strokes > 0) {
-    const cubeSize = Math.max(0.28, rad * 0.045);
-    const mesh = new THREE.InstancedMesh(
-      new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize),
-      new THREE.MeshStandardMaterial({ color: 0xd8c48f, emissive: 0x8a6a2a, emissiveIntensity: 0.25, roughness: 0.32, metalness: 0.45 }),
-      strokes
-    );
-    const dummy = new THREE.Object3D();
-    for (let i = 0; i < strokes; i++) {
-      dummy.position.set((i - (strokes - 1) / 2) * cubeSize * 1.7, cubeSize * 0.5 + 0.15, 0);
-      dummy.updateMatrix();
-      mesh.setMatrixAt(i, dummy.matrix);
+  function grow(count, cubeN) {
+    planted.forEach(drop);
+    planted.length = 0;
+    let sphereCount = 0;
+    if (count > 0) {
+      const mesh = new THREE.InstancedMesh(
+        new THREE.SphereGeometry(0.16, 16, 12),
+        new THREE.MeshStandardMaterial({ color: color, emissive: color, emissiveIntensity: 0.35, roughness: 0.4, metalness: 0.08 }),
+        count
+      );
+      const dummy = new THREE.Object3D();
+      for (let i = 0; i < count; i++) {
+        const ring = Math.floor(i / 24);
+        const idx = i % 24;
+        const per = Math.min(24, count - ring * 24);
+        const a = (idx / per) * Math.PI * 2 + ring * 0.2;
+        const rr = 1.15 + ring * 0.7;
+        dummy.position.set(Math.cos(a) * rr, 0.2, Math.sin(a) * rr);
+        dummy.updateMatrix();
+        mesh.setMatrixAt(i, dummy.matrix);
+      }
+      mesh.instanceMatrix.needsUpdate = true;
+      scene.add(mesh);
+      planted.push(mesh);
+      sphereCount = mesh.count;
+    } else {
+      const ring = new THREE.Mesh(
+        new THREE.TorusGeometry(1.5, 0.05, 12, 80),
+        new THREE.MeshStandardMaterial({ color: color, roughness: 0.42, metalness: 0.18 })
+      );
+      ring.rotation.x = Math.PI / 2;
+      scene.add(ring);
+      planted.push(ring);
     }
-    mesh.instanceMatrix.needsUpdate = true;
-    scene.add(mesh);
-    cubeCount = mesh.count;
+    let cubeCount = 0;
+    if (cubeN > 0) {
+      const cubeSize = Math.max(0.28, rad * 0.045);
+      const mesh = new THREE.InstancedMesh(
+        new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize),
+        new THREE.MeshStandardMaterial({ color: 0xd8c48f, emissive: 0x8a6a2a, emissiveIntensity: 0.25, roughness: 0.32, metalness: 0.45 }),
+        cubeN
+      );
+      const dummy = new THREE.Object3D();
+      for (let i = 0; i < cubeN; i++) {
+        dummy.position.set((i - (cubeN - 1) / 2) * cubeSize * 1.7, cubeSize * 0.5 + 0.15, 0);
+        dummy.updateMatrix();
+        mesh.setMatrixAt(i, dummy.matrix);
+      }
+      mesh.instanceMatrix.needsUpdate = true;
+      scene.add(mesh);
+      planted.push(mesh);
+      cubeCount = mesh.count;
+    }
+    if (sphereCount !== count) throw Error('spheres ' + sphereCount);
+    if (cubeCount !== cubeN) throw Error('cubes ' + cubeCount);
+    return { sphereCount: sphereCount, cubeCount: cubeCount };
   }
-  if (sphereCount !== n) throw Error('spheres ' + sphereCount);
-  if (cubeCount !== strokes) throw Error('cubes ' + cubeCount);
+  const first = grow(n, strokes);
+  const second = grow(n, strokes);
+  if (first.sphereCount !== second.sphereCount || first.cubeCount !== second.cubeCount) throw Error('regenerative drift');
+  if (second.sphereCount !== n || second.cubeCount !== strokes) throw Error('regenerative drift');
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.target.set(0, 0.35, 0);
   controls.autoRotate = !reduce;
@@ -113,6 +131,22 @@ function hero(n, strokes) {
     renderer.render(scene, camera);
     requestAnimationFrame(frame);
   })();
+  return { grow: grow };
+}
+function paintSlot(id, text) {
+  const el = document.getElementById(id);
+  if (!el) throw Error(id + ' missing');
+  el.textContent = text;
+  if (el.textContent !== text) throw Error(id + ' drift');
+}
+function browserStore() {
+  return {
+    get: function () { return localStorage.getItem(KEPT); },
+    set: function (v) {
+      try { localStorage.setItem(KEPT, v); }
+      catch (e) { throw Error('persistent book'); }
+    }
+  };
 }
 (async function () {
   try {
@@ -140,10 +174,10 @@ function hero(n, strokes) {
     const shown = [...list.querySelectorAll('a')].map(function (a) { return a.textContent; });
     if (shown.join('\n') !== mine.join('\n')) throw Error('render');
     document.getElementById('strokes').textContent = hallN + ' in 0root.ai, ' + accountN + ' in davidwise01';
-    hero(mine.length, strokes);
+    const picture = hero(mine.length, strokes);
     const canvas = document.querySelector('#v3 canvas');
     if (!canvas || canvas.width < 1) throw Error('critic canvas');
-    const note = criticizeCubit({
+    const measure = {
       name: NAME,
       letter: letter,
       repos: mine.length,
@@ -153,11 +187,34 @@ function hero(n, strokes) {
       total: data.names.length,
       names: mine,
       still: reduceMotion()
-    });
+    };
+    const note = criticizeCubit(measure);
     const slot = document.getElementById('critique');
     if (!slot) throw Error('critic missing');
     slot.textContent = note;
     if (slot.textContent !== note) throw Error('critic drift');
+    const act = agenticCubit(measure);
+    paintSlot('agentic', act.text);
+    paintSlot('regenerative', regenerative(function () { return note + '\n' + act.text; }));
+    paintSlot('persistent', keepRow(browserStore(), { id: NAME, repos: mine.length, strokes: strokes, act: act.act }));
+    const regen = document.getElementById('regen');
+    if (!regen) throw Error('regen missing');
+    regen.addEventListener('click', function () {
+      try {
+        const again = picture.grow(mine.length, strokes);
+        if (again.sphereCount !== mine.length || again.cubeCount !== strokes) throw Error('regenerative drift');
+        const note2 = criticizeCubit(measure);
+        const act2 = agenticCubit(measure);
+        if (document.getElementById('critique').textContent !== note2) throw Error('regenerative drift');
+        if (document.getElementById('agentic').textContent !== act2.text) throw Error('regenerative drift');
+        const next = document.querySelector('#v3 canvas');
+        if (!next || next.width < 1) throw Error('regenerative drift');
+        paintSlot('regenerative', regenerative(function () { return note2 + '\n' + act2.text; }));
+      } catch (err) {
+        paint('FAIL ' + err.message, true);
+        throw err;
+      }
+    });
     paint('LIT ' + NAME + ' holds ' + mine.length + ' public repos and ' + strokes + ' host strokes', false);
   } catch (e) {
     paint('FAIL ' + e.message, true);
