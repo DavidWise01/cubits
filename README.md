@@ -7,3 +7,5 @@ They hold two hosts: [0root.ai](https://0root.ai/) and the public name [davidwis
 The sealed list is the public set fetched on 2026-10-21. A page throws if that list no longer partitions into these twenty-six cubits.
 
 `node facts.test.cjs` prints `CUBITS PASS`.
+
+Each page is an analytical cubit. After the count holds, the page criticizes itself in a note built from those same numbers. A note that goes soft, or that cites a different count, throws. The seal does not cover the complaint.

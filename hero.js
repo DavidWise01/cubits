@@ -8,6 +8,9 @@ const SLUG = body.dataset.slug;
 const BLURB = body.dataset.blurb;
 const SEAL = body.dataset.seal;
 
+function reduceMotion() {
+  return matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
 function paint(msg, fail) {
   const p = document.getElementById('proof');
   p.textContent = msg;
@@ -18,7 +21,7 @@ async function sha(t) {
   return [...new Uint8Array(b)].map(function (v) { return v.toString(16).padStart(2, '0'); }).join('');
 }
 function hero(n, strokes) {
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reduce = reduceMotion();
   const box = document.getElementById('v3');
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
@@ -126,6 +129,23 @@ function hero(n, strokes) {
     if (shown.join('\n') !== mine.join('\n')) throw Error('render');
     document.getElementById('strokes').textContent = hallN + ' in 0root.ai, ' + accountN + ' in davidwise01';
     hero(mine.length, strokes);
+    const canvas = document.querySelector('#v3 canvas');
+    if (!canvas || canvas.width < 1) throw Error('critic canvas');
+    const note = criticizeCubit({
+      name: NAME,
+      letter: letter,
+      repos: mine.length,
+      strokes: strokes,
+      hall: hallN,
+      account: accountN,
+      total: data.names.length,
+      names: mine,
+      still: reduceMotion()
+    });
+    const slot = document.getElementById('critique');
+    if (!slot) throw Error('critic missing');
+    slot.textContent = note;
+    if (slot.textContent !== note) throw Error('critic drift');
     paint('LIT ' + NAME + ' holds ' + mine.length + ' public repos and ' + strokes + ' host strokes', false);
   } catch (e) {
     paint('FAIL ' + e.message, true);
