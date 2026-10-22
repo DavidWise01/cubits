@@ -30,17 +30,25 @@ function hero(n, strokes) {
   const scene = new THREE.Scene();
   const rings = Math.max(1, Math.ceil(n / 24));
   const rad = n === 0 ? 1.8 : 1.15 + (rings - 1) * 0.7;
-  scene.fog = new THREE.Fog(0x14120e, rad * 0.4, rad * 4 + 10);
+  scene.background = new THREE.Color(0x05070d);
+  scene.fog = new THREE.Fog(0x05070d, rad * 0.55, rad * 4.2 + 8);
   const camera = new THREE.PerspectiveCamera(42, box.clientWidth / Math.max(1, box.clientHeight), 0.1, 800);
   camera.position.set(rad * 0.2, rad * 0.9 + 1.8, rad * 1.35 + 2.2);
   camera.lookAt(0, 0.35, 0);
   scene.add(new THREE.AmbientLight(0xffffff, 0.62));
-  const key = new THREE.DirectionalLight(0xfff4e0, 1.35);
+  const key = new THREE.DirectionalLight(0xfff4e0, 1.15);
   key.position.set(6, 10, 4);
   scene.add(key);
+  const reach = rad * 5 + 8;
+  const pink = new THREE.PointLight(0xff2bd6, 6 + rad * 0.25, reach);
+  pink.position.set(-rad, rad * 0.55, rad * 0.35);
+  scene.add(pink);
+  const cyan = new THREE.PointLight(0x00f0ff, 5 + rad * 0.2, reach);
+  cyan.position.set(rad * 0.85, rad * 0.4, rad);
+  scene.add(cyan);
   const floor = new THREE.Mesh(
     new THREE.CircleGeometry(rad + 3, 72),
-    new THREE.MeshStandardMaterial({ color: 0x1c1914, roughness: 0.92 })
+    new THREE.MeshStandardMaterial({ color: 0x10141c, roughness: 0.88, metalness: 0.12 })
   );
   floor.rotation.x = -Math.PI / 2;
   scene.add(floor);
@@ -50,7 +58,7 @@ function hero(n, strokes) {
   if (n > 0) {
     const mesh = new THREE.InstancedMesh(
       new THREE.SphereGeometry(0.16, 16, 12),
-      new THREE.MeshStandardMaterial({ color: color, roughness: 0.4, metalness: 0.08 }),
+      new THREE.MeshStandardMaterial({ color: color, emissive: color, emissiveIntensity: 0.35, roughness: 0.4, metalness: 0.08 }),
       n
     );
     const dummy = new THREE.Object3D();
@@ -80,7 +88,7 @@ function hero(n, strokes) {
     const cubeSize = Math.max(0.28, rad * 0.045);
     const mesh = new THREE.InstancedMesh(
       new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize),
-      new THREE.MeshStandardMaterial({ color: 0xd8c48f, roughness: 0.32, metalness: 0.45 }),
+      new THREE.MeshStandardMaterial({ color: 0xd8c48f, emissive: 0x8a6a2a, emissiveIntensity: 0.25, roughness: 0.32, metalness: 0.45 }),
       strokes
     );
     const dummy = new THREE.Object3D();
@@ -108,6 +116,10 @@ function hero(n, strokes) {
 }
 (async function () {
   try {
+    const neonBox = document.querySelector('.panel.neon #v3');
+    const head = document.querySelector('.panel:not(.neon) > h2');
+    if (!neonBox) throw Error('neon panel');
+    if (!head || head.textContent !== 'analytical') throw Error('analytical panel');
     if (await sha(NAME + '|' + SLUG + '|' + BLURB) !== SEAL) throw Error('seal mismatch');
     const res = await fetch('repos.json');
     if (!res.ok) throw Error('list ' + res.status);

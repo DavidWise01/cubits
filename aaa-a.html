@@ -5,37 +5,70 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AaaA · cubits</title>
 <style>
-body{margin:0;font:17px/1.5 Georgia,serif;color:#24180f;background:hsl(0,48%,91%)}
-main{max-width:880px;margin:0 auto;padding:28px 18px 72px}
-a{color:#6a3d12}
-.kicker{font:12px/1.4 ui-sans-serif,system-ui,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#6d5840}
-h1{font-size:64px;line-height:.95;margin:8px 0 4px}
-#v3{height:560px;border-radius:18px;overflow:hidden;background:#14120e;margin:14px 0}
-.tag{display:inline-block;padding:0 6px;border-radius:6px;font:700 12px/1.6 ui-sans-serif,system-ui,sans-serif}
-.lit{background:#b6efb0}.amber{background:#ffd89a}.model{background:#e2d0ff}
-#proof{font:15px/1.45 ui-monospace,monospace;padding:10px 12px;background:rgba(255,255,255,.72);border-left:4px solid #2f7d32}
-#proof.fail{border-color:#a32020}
-#critic{margin:14px 0;padding:12px 14px;background:rgba(255,255,255,.55);border-radius:14px}#critique{margin:6px 0 0;font-style:italic}ul{columns:3;font:13px/1.45 ui-monospace,monospace;padding-left:18px}
-code{font-size:12px;word-break:break-all}
-@media(max-width:720px){h1{font-size:44px}#v3{height:420px}ul{columns:1}}
+:root{--neon-cyan:#00f0ff;--neon-pink:#ff2bd6}
+html,body{background:#030308;color:#d7e3f5;font:16px/1.55 ui-monospace,Menlo,monospace}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(600px 400px at 20% 10%, rgba(0,240,255,.06), transparent 70%),
+  radial-gradient(700px 500px at 80% 90%, rgba(255,43,214,.05), transparent 70%)}
+#wrap{position:relative;z-index:1;max-width:1340px;margin:0 auto;padding:34px 18px 50px;text-align:center}
+h1{font-size:42px;font-weight:400;letter-spacing:.18em;color:#eaf6ff;margin:.2em 0;
+  text-shadow:0 0 8px var(--neon-cyan), 0 0 28px rgba(0,240,255,.55);animation:cubitflicker 7s infinite}
+#sub{font-size:11px;letter-spacing:.28em;color:#5f7396;text-transform:uppercase;margin-bottom:26px}
+#sub b{color:var(--neon-pink);font-weight:400;text-shadow:0 0 10px var(--neon-pink)}
+#stage{display:flex;gap:26px;justify-content:center;align-items:flex-start;flex-wrap:wrap;text-align:left}
+.panel{border:1px solid rgba(0,240,255,.18);border-radius:14px;padding:18px 16px 16px;
+  background:rgba(5,8,16,.72);box-shadow:0 0 34px rgba(0,240,255,.07), inset 0 0 60px rgba(0,0,0,.5);
+  flex:1 1 460px;max-width:760px}
+.panel.neon{border-color:rgba(255,43,214,.25);box-shadow:0 0 34px rgba(255,43,214,.08), inset 0 0 60px rgba(0,0,0,.5);max-width:680px}
+.panel h2{font-size:12px;font-weight:400;letter-spacing:.4em;text-transform:uppercase;margin:0 0 2px;color:#a5e8eb}
+.panel.neon h2{color:#ffb3ec;text-shadow:0 0 12px var(--neon-pink)}
+.label{font-size:11px;letter-spacing:.12em;color:#5f7396;text-transform:uppercase;margin:0 0 12px}
+a{color:var(--neon-cyan)}
+code{color:#ffb3ec;font-size:12px;word-break:break-all}
+.kicker{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#5f7396}
+span.tag{display:inline-block;padding:0 6px;border-radius:6px;font:700 12px/1.6 ui-sans-serif,system-ui,sans-serif;letter-spacing:0;text-transform:none;color:#111}
+.lit{background:#3ee07a}.amber{background:#ffb020}.model{background:#b48cff}
+#v3{width:100%;height:560px;border-radius:14px;overflow:hidden;background:#05070d;
+  box-shadow:0 0 0 3px var(--neon-pink), 0 0 28px rgba(255,43,214,.25)}
+#proof{font:15px/1.45 ui-monospace,monospace;padding:10px 12px;background:rgba(5,8,16,.85);border-left:4px solid var(--neon-cyan);color:#d7e3f5}
+#proof.fail{border-color:#ff5a5a;color:#ffb3ec}
+#critic{margin:14px 0}
+#critique{margin:6px 0 0;font-style:italic;color:#ffb3ec}
+#strokes{font:13px/1.45 ui-monospace,monospace;color:#5f7396}
+ul{columns:3;font:13px/1.45 ui-monospace,monospace;padding-left:18px}
+li{break-inside:avoid}
+#formula{font:14px/1.5 ui-monospace,monospace;background:rgba(5,8,16,.72);padding:12px 14px;border-radius:12px;border:1px solid rgba(0,240,255,.18)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:10px;margin:16px 0}
+.card{display:block;background:rgba(5,8,16,.78);border:1px solid rgba(0,240,255,.18);border-radius:12px;padding:10px 12px;text-decoration:none;color:#d7e3f5}
+.card b{display:block;font-size:22px;letter-spacing:.08em;color:#eaf6ff}
+.card i{font-style:italic;color:#5f7396}
+p,li{color:#d7e3f5}
+@keyframes cubitflicker{0%,100%{opacity:1}92%{opacity:1}93%{opacity:.55}94%{opacity:1}97%{opacity:.8}98%{opacity:1}}
+@media (prefers-reduced-motion:reduce){h1{animation:none}}
+@media (min-width:900px){.panel.neon{position:sticky;top:18px}}
+@media (max-width:720px){h1{font-size:32px;letter-spacing:.08em}#v3{height:420px}ul{columns:1}}
 </style>
 </head>
 <body data-letter="a" data-name="AaaA" data-slug="aaa-a" data-blurb="Cubit A holds the letter a from 0root.ai and from davidwise01." data-seal="1f28cd67c9b903533621a7c73aeaa3edae534fc39baaaf510e6902ef83080412">
-<main>
-<p class="kicker"><a href="./">cubits</a> · letter A</p>
+<div id="wrap">
 <h1>AaaA</h1>
-<p class="kicker">Cubit A holds the letter a from 0root.ai and from davidwise01.</p>
-<div id="v3"></div>
+<div id="sub">analytical · <b>neon</b> · letter A · 0root.ai · davidwise01</div>
+<div id="stage">
+<div class="panel neon"><h2>neon</h2><p class="label">{{ act || react || change }} · the sculpture</p><div id="v3"></div></div>
+<div class="panel"><h2>analytical</h2><p class="label">Cubit A holds the letter a from 0root.ai and from davidwise01.</p>
+<p class="kicker"><a href="./">cubits</a> · letter A</p>
 <p><span class="tag lit">LIT</span> This page reads the sealed public list and throws unless every repo whose first letter is a sits here, the list hash matches, and the picture counts the same repos and the same host strokes.</p>
 <p><span class="tag amber">AMBER</span> The sealed list is the public repositories of DavidWise01 on 2026-10-21. This page does not call GitHub. https://0root.ai/ is the hall. The git repository named 0root is a different object, filed by its first letter.</p>
 <p><span class="tag model">MODEL</span> Spheres picture the repo count. Gold cubes picture the strokes of a in 0root.ai and in davidwise01.</p>
 <p id="proof">checking…</p>
-<section id="critic"><h2 class="kicker">analytical</h2><p id="critique">checking…</p><p><span class="tag model">MODEL</span> This cubit criticizes its own page. The voice is a picture. The numbers in the criticism are checked, and a soft review throws.</p></section>
+<section id="critic"><p id="critique">checking…</p><p><span class="tag model">MODEL</span> This cubit criticizes its own page. The voice is a picture. The numbers in the criticism are checked, and a soft review throws.</p></section>
 <p id="strokes"></p>
 <ul id="list"></ul>
 <p><a href="zzz-z.html">ZzzZ</a> · <a href="./">cubits</a> · <a href="bbb-b.html">BbbB</a> · <a href="https://0root.ai/">0root.ai</a> · <a href="https://github.com/DavidWise01">DavidWise01</a></p>
 <p><code>seal 1f28cd67c9b903533621a7c73aeaa3edae534fc39baaaf510e6902ef83080412</code></p>
-</main>
+</div>
+</div>
+</div>
 <script src="facts.js"></script>
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
 <script type="module" src="hero.js"></script>

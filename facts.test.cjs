@@ -60,8 +60,20 @@ for (const c of f.cubits()) {
   const html = fs.readFileSync(path.join(__dirname, c.slug + '.html'), 'utf8');
   if (!html.includes('id="critique"') || !html.includes('>analytical<')) throw Error('panel ' + c.slug);
   if (html.includes('\r')) throw Error('cr voice ' + c.slug);
+  const neonAt = html.indexOf('class="panel neon"');
+  const v3At = html.indexOf('id="v3"');
+  const headAt = html.indexOf('<h2>analytical</h2>');
+  if (!(neonAt >= 0 && neonAt < v3At && v3At < headAt)) throw Error('shell ' + c.slug);
+  if (!html.includes('{{ act || react || change }}')) throw Error('neon tag ' + c.slug);
 }
 if (!indexText.includes('id="critique"')) throw Error('index critic');
+if (!indexText.includes('<h2>analytical</h2>')) throw Error('index analytical');
+const iNeon = indexText.indexOf('class="panel neon"');
+const iFormula = indexText.indexOf('id="formula"');
+const iHead = indexText.indexOf('<h2>analytical</h2>');
+const iProof = indexText.indexOf('id="proof"');
+if (!(iNeon >= 0 && iNeon < iFormula && iFormula < iHead && iHead < iProof)) throw Error('index shell');
+if (!indexText.includes('{{ act || react || change }}')) throw Error('index neon');
 const still = f.criticizeCubit({
   name: 'XxxX', letter: 'x', repos: buckets.x.length, strokes: 0, hall: 0, account: 0,
   total: 2142, names: buckets.x, still: true
