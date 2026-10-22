@@ -282,13 +282,68 @@
     }
     return result.text;
   }
+  function mirrorLetter(letter) {
+    if (typeof letter !== "string" || letter.length !== 1) throw Error("mirror letter");
+    const i = letter.charCodeAt(0);
+    if (i < 97 || i > 122) throw Error("mirror letter");
+    return String.fromCharCode(219 - i);
+  }
+  function mirrorBanned(text) {
+    const banned = ["accepts the act", "another ring", "a carpet", "circle of", "refuse to invent", "empty boast", "I act"];
+    for (let i = 0; i < banned.length; i++) {
+      if (text.indexOf(banned[i]) !== -1) throw Error("mirror act");
+    }
+  }
+  function mirrorLine(self, pair) {
+    if (!self || !pair || !self.name || !pair.name || !self.letter || !pair.letter) throw Error("mirror subject");
+    if (mirrorLetter(self.letter) !== pair.letter || mirrorLetter(pair.letter) !== self.letter) throw Error("mirror pair");
+    if (!(self.repos >= 0) || !(pair.repos >= 0) || !(self.strokes >= 0) || !(pair.strokes >= 0)) throw Error("mirror counts");
+    const shown = pair.repos + " public repos and " + strokePhrase(pair.strokes);
+    const text = self.name + " faces " + pair.name + " across the mirror hallway. The glass shows " + shown + ". " + self.name + " holds the mirror and does not act.";
+    if (text.indexOf("does not act.") === -1 || text.indexOf(shown) === -1) throw Error("mirror drift");
+    mirrorBanned(text);
+    return { act: "mirror", name: self.name, pair: pair.name, letter: pair.letter, repos: pair.repos, strokes: pair.strokes, text: text };
+  }
+  function mirrorCheck(line, fresh) {
+    if (!line || line.act !== "mirror" || !line.text || line.text.indexOf("does not act.") === -1) throw Error("mirror act");
+    if (!fresh || line.repos !== fresh.repos || line.strokes !== fresh.strokes) throw Error("mirror drift");
+    if (line.text.indexOf(fresh.repos + " public repos and " + strokePhrase(fresh.strokes)) === -1) throw Error("mirror drift");
+    mirrorBanned(line.text);
+    return line.text;
+  }
+  function mirrorHall(rows) {
+    if (!rows || rows.length !== 26) throw Error("mirror hall");
+    const lines = [];
+    let repos = 0;
+    let strokes = 0;
+    for (let i = 0; i < 13; i++) {
+      const a = rows[i];
+      const b = rows[25 - i];
+      if (!a || !b || a.letter.charCodeAt(0) !== 97 + i || b.letter.charCodeAt(0) !== 122 - i) throw Error("mirror hall");
+      const left = mirrorLine(a, b);
+      const right = mirrorLine(b, a);
+      mirrorCheck(left, { repos: b.repos, strokes: b.strokes });
+      mirrorCheck(right, { repos: a.repos, strokes: a.strokes });
+      const row = a.name + " shows " + a.repos + " public repos and " + strokePhrase(a.strokes) + ". " + b.name + " shows " + b.repos + " public repos and " + strokePhrase(b.strokes) + ". Neither acts.";
+      mirrorBanned(row);
+      if (row.indexOf("Neither acts.") === -1) throw Error("mirror act");
+      lines.push({ left: left, right: right, row: row });
+      repos += a.repos + b.repos;
+      strokes += a.strokes + b.strokes;
+    }
+    if (lines.length !== 13 || lines[0].left.pair !== "ZzzZ" || lines[12].left.pair !== "NnnN") throw Error("mirror hall");
+    const text = "The mirror hallway seats thirteen pairs. AaaA faces ZzzZ. MmmM faces NnnN. Each cubit copies the facing count and then stops. The Greeks stood here with mirrors and called the glare a battle. Nothing burns.";
+    if (text.indexOf("thirteen pairs") === -1 || text.indexOf("AaaA faces ZzzZ") === -1 || text.indexOf("MmmM faces NnnN") === -1 || text.indexOf("Nothing burns.") === -1) throw Error("mirror hall");
+    return { pairs: 13, act: "mirror", repos: repos, strokes: strokes, lines: lines, text: text };
+  }
   const api = {
     LISTHASH: LISTHASH, ACCOUNT: ACCOUNT, HOSTS: HOSTS, KEPT: "cubits-kept",
     cubits: cubits, formula: formula, factCubitNames: factCubitNames,
     factHosts: factHosts, firstLetter: firstLetter, factPartition: factPartition,
     extremes: extremes, criticizeCubit: criticizeCubit, criticizeShelf: criticizeShelf,
     agenticCubit: agenticCubit, agenticShelf: agenticShelf, regenerative: regenerative,
-    persistentRow: persistentRow, keepRow: keepRow
+    persistentRow: persistentRow, keepRow: keepRow,
+    mirrorLetter: mirrorLetter, mirrorLine: mirrorLine, mirrorCheck: mirrorCheck, mirrorHall: mirrorHall
   };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else Object.assign(root, api);

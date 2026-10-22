@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mirror · cubits</title>
+<style>
+:root{--neon-cyan:#00f0ff;--neon-pink:#ff2bd6}
+html,body{background:#030308;color:#d7e3f5;font:16px/1.55 ui-monospace,Menlo,monospace}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(600px 400px at 20% 10%, rgba(0,240,255,.06), transparent 70%),
+  radial-gradient(700px 500px at 80% 90%, rgba(255,43,214,.05), transparent 70%)}
+#wrap{position:relative;z-index:1;max-width:1340px;margin:0 auto;padding:34px 18px 50px;text-align:center}
+h1{font-size:42px;font-weight:400;letter-spacing:.18em;color:#eaf6ff;margin:.2em 0;
+  text-shadow:0 0 8px var(--neon-cyan), 0 0 28px rgba(0,240,255,.55);animation:cubitflicker 7s infinite}
+#sub{font-size:11px;letter-spacing:.28em;color:#5f7396;text-transform:uppercase;margin-bottom:26px}
+#sub b{color:var(--neon-pink);font-weight:400;text-shadow:0 0 10px var(--neon-pink)}
+#stage{display:flex;gap:26px;justify-content:center;align-items:flex-start;flex-wrap:wrap;text-align:left}
+.panel{border:1px solid rgba(0,240,255,.18);border-radius:14px;padding:18px 16px 16px;
+  background:rgba(5,8,16,.72);box-shadow:0 0 34px rgba(0,240,255,.07), inset 0 0 60px rgba(0,0,0,.5);
+  flex:1 1 460px;max-width:760px}
+.panel.neon{border-color:rgba(255,43,214,.25);box-shadow:0 0 34px rgba(255,43,214,.08), inset 0 0 60px rgba(0,0,0,.5);max-width:680px}
+.panel h2{font-size:12px;font-weight:400;letter-spacing:.4em;text-transform:uppercase;margin:0 0 2px;color:#a5e8eb}
+.panel.neon h2{color:#ffb3ec;text-shadow:0 0 12px var(--neon-pink)}
+.label{font-size:11px;letter-spacing:.12em;color:#5f7396;text-transform:uppercase;margin:0 0 12px}
+a{color:var(--neon-cyan)}
+code{color:#ffb3ec;font-size:12px;word-break:break-all}
+.kicker{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#5f7396}
+span.tag{display:inline-block;padding:0 6px;border-radius:6px;font:700 12px/1.6 ui-sans-serif,system-ui,sans-serif;letter-spacing:0;text-transform:none;color:#111}
+.lit{background:#3ee07a}.amber{background:#ffb020}.model{background:#b48cff}
+#v3{width:100%;height:560px;border-radius:14px;overflow:hidden;background:#05070d;
+  box-shadow:0 0 0 3px var(--neon-pink), 0 0 28px rgba(255,43,214,.25)}
+#proof{font:15px/1.45 ui-monospace,monospace;padding:10px 12px;background:rgba(5,8,16,.85);border-left:4px solid var(--neon-cyan);color:#d7e3f5}
+#proof.fail{border-color:#ff5a5a;color:#ffb3ec}
+#mirror{margin:6px 0 0}
+#pairs{columns:1;font:13px/1.45 ui-monospace,monospace;padding-left:18px}
+li{break-inside:avoid}
+p,li{color:#d7e3f5}
+@keyframes cubitflicker{0%,100%{opacity:1}92%{opacity:1}93%{opacity:.55}94%{opacity:1}97%{opacity:.8}98%{opacity:1}}
+button{font:inherit;letter-spacing:.12em;text-transform:uppercase;background:transparent;color:#a5e8eb;border:1px solid rgba(0,240,255,.4);border-radius:18px;padding:8px 14px;cursor:pointer}button:hover{background:rgba(0,240,255,.1)}#life h2{margin-top:16px}
+@media (prefers-reduced-motion:reduce){h1{animation:none}}
+@media (min-width:900px){.panel.neon{position:sticky;top:18px}}
+@media (max-width:720px){h1{font-size:32px;letter-spacing:.08em}#v3{height:420px}}
+</style>
+</head>
+<body data-name="The Mirror Hallway" data-slug="mirror" data-blurb="Thirteen pairs of cubits face across a mirror and do not act." data-seal="de9fae25f4ca99e225a2da1262909a11ab144909ce4a1cd16c35689a549487da">
+<div id="wrap">
+<h1>Mirror</h1>
+<div id="sub">analytical · <b>neon</b> · mirror · thirteen pairs · 0root.ai · davidwise01</div>
+<div id="stage">
+<div class="panel neon"><h2>neon</h2><p class="label">{{ mirror || mirror || mirror }} · the hallway</p><div id="v3"></div><p><button id="regen" type="button">Regenerate</button></p></div>
+<div class="panel"><h2>analytical</h2><p class="label">Thirteen pairs of cubits face across a mirror and do not act.</p>
+<p class="kicker"><a href="./">cubits</a> · mirror hallway</p>
+<p>This hallway is the cubits facing each other. It is not the hall at 0root.ai.</p>
+<p><span class="tag lit">LIT</span> This page throws unless thirteen pairs face across the hall, each glass shows the facing cubit's sealed count, and none of them act.</p>
+<p><span class="tag amber">AMBER</span> The sealed list is the public repositories of DavidWise01 on 2026-10-21. This page does not call GitHub. The kept row lives in this browser. It is not the sealed list.</p>
+<p><span class="tag model">MODEL</span> Twenty-six panes stand in two rows. The center glass reflects them. The Greeks stood in a glare like this and called it a battle. Nothing burns.</p>
+<p id="proof">checking…</p>
+<section id="life">
+<h2>mirror</h2><p id="mirror">checking…</p>
+<h2>regenerative</h2><p id="regenerative">checking…</p>
+<h2>persistent</h2><p id="persistent">checking…</p>
+<p><span class="tag model">MODEL</span> Regenerate reads the pairs again. The second reading has to match the first. The panes stay where they are.</p>
+</section>
+<ul id="pairs"></ul>
+<p><a href="./">cubits</a> · <a href="https://0root.ai/">0root.ai</a> · <a href="https://github.com/DavidWise01">DavidWise01</a></p>
+<p><code>seal de9fae25f4ca99e225a2da1262909a11ab144909ce4a1cd16c35689a549487da</code></p>
+</div>
+</div>
+</div>
+<script src="facts.js"></script>
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+<script type="module" src="hall.js"></script>
+</body>
+</html>

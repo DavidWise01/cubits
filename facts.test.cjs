@@ -67,6 +67,8 @@ for (const c of f.cubits()) {
   if (!html.includes('{{ act || react || change }}')) throw Error('neon tag ' + c.slug);
   if (!html.includes('id="agentic"') || !html.includes('id="regenerative"') || !html.includes('id="persistent"') || !html.includes('id="regen"')) throw Error('life ' + c.slug);
   if (!html.includes('agentic · regenerative · persistent')) throw Error('life line ' + c.slug);
+  const pair = f.cubits()[f.mirrorLetter(c.letter).charCodeAt(0) - 97];
+  if (!html.includes('id="mirror"') || !html.includes('href="mirror.html"') || !html.includes('href="' + pair.slug + '.html">' + pair.name + '</a>')) throw Error('mirror ' + c.slug);
   const strokesN = (hosts.hall[c.letter] || 0) + (hosts.account[c.letter] || 0);
   const ag = f.agenticCubit({ name: c.name, letter: c.letter, repos: mine.length, strokes: strokesN });
   if (ag.text.indexOf(c.name + ' accepts the act.') !== 0) throw Error('agent ' + c.name);
@@ -97,6 +99,7 @@ const iProof = indexText.indexOf('id="proof"');
 if (!(iNeon >= 0 && iNeon < iFormula && iFormula < iHead && iHead < iProof)) throw Error('index shell');
 if (!indexText.includes('{{ act || react || change }}')) throw Error('index neon');
 if (!indexText.includes('id="agentic"') || !indexText.includes('id="regen"') || !indexText.includes('agentic · regenerative · persistent')) throw Error('index life');
+if (!indexText.includes('id="mirror"') || !indexText.includes('href="mirror.html"') || !indexText.includes('mirrorHall(rows)')) throw Error('index mirror');
 const shelfAct = f.agenticShelf({ cards: 26, fullest: ends.fullest, thinnest: ends.thinnest });
 if (shelfAct.act !== 'point' || shelfAct.text.indexOf('TttT') === -1 || shelfAct.text.indexOf('draw none of them') === -1) throw Error('shelf act');
 let flipped = 0;
@@ -108,6 +111,46 @@ let bookThrew = false;
 try { f.keepRow({ get: function () { return '{'; }, set: function () {} }, { id: 'AaaA', repos: 1, strokes: 0, act: 'refuse' }); }
 catch (e) { bookThrew = e.message === 'persistent book'; }
 if (!bookThrew) throw Error('book soft');
+if (f.mirrorLetter('a') !== 'z' || f.mirrorLetter('z') !== 'a' || f.mirrorLetter('m') !== 'n' || f.mirrorLetter('n') !== 'm') throw Error('mirror letter');
+const mirrorRows = f.cubits().map(function (c) {
+  return {
+    name: c.name,
+    letter: c.letter,
+    repos: buckets[c.letter].length,
+    strokes: (hosts.hall[c.letter] || 0) + (hosts.account[c.letter] || 0)
+  };
+});
+const hallMirror = f.mirrorHall(mirrorRows);
+if (hallMirror.pairs !== 13 || hallMirror.act !== 'mirror' || hallMirror.repos !== 2142 || hallMirror.strokes !== 15) throw Error('mirror hall');
+if (hallMirror.text.indexOf('AaaA faces ZzzZ') === -1 || hallMirror.text.indexOf('Nothing burns.') === -1) throw Error('mirror greeks');
+if (hallMirror.lines[0].left.pair !== 'ZzzZ' || hallMirror.lines[12].left.pair !== 'NnnN') throw Error('mirror ends');
+if (hallMirror.lines[0].row.indexOf('Neither acts.') === -1) throw Error('mirror row');
+const aaaRow = mirrorRows[0];
+const zzzRow = mirrorRows[25];
+const aaaLine = f.mirrorLine(aaaRow, zzzRow);
+if (aaaLine.act !== 'mirror' || aaaLine.text.indexOf('does not act.') === -1) throw Error('mirror line');
+f.mirrorCheck(aaaLine, { repos: zzzRow.repos, strokes: zzzRow.strokes });
+let mirrorDrift = false;
+try { f.mirrorCheck(aaaLine, { repos: zzzRow.repos + 1, strokes: zzzRow.strokes }); }
+catch (e) { mirrorDrift = e.message === 'mirror drift'; }
+if (!mirrorDrift) throw Error('mirror soft');
+let mirrorPair = false;
+try { f.mirrorLine(aaaRow, aaaRow); }
+catch (e) { mirrorPair = e.message === 'mirror pair'; }
+if (!mirrorPair) throw Error('mirror pair soft');
+let mirrorShort = false;
+try { f.mirrorHall(mirrorRows.slice(0, 25)); }
+catch (e) { mirrorShort = e.message === 'mirror hall'; }
+if (!mirrorShort) throw Error('mirror hall soft');
+const mirrorHtml = fs.readFileSync(path.join(__dirname, 'mirror.html'));
+if (mirrorHtml.includes(13)) throw Error('cr mirror');
+const mirrorText = mirrorHtml.toString('utf8');
+const mirrorSeal = sha('The Mirror Hallway|mirror|Thirteen pairs of cubits face across a mirror and do not act.');
+const mirrorDlw = JSON.parse(fs.readFileSync(path.join(__dirname, 'seals', 'mirror.dlw'), 'utf8'));
+if (mirrorDlw.seal !== mirrorSeal || !mirrorText.includes(mirrorSeal)) throw Error('mirror seal');
+if (!mirrorText.includes('id="pairs"') || !mirrorText.includes('{{ mirror || mirror || mirror }}')) throw Error('mirror page');
+const hallJs = fs.readFileSync(path.join(__dirname, 'hall.js'));
+if (hallJs.includes(13)) throw Error('cr hall');
 const still = f.criticizeCubit({
   name: 'XxxX', letter: 'x', repos: buckets.x.length, strokes: 0, hall: 0, account: 0,
   total: 2142, names: buckets.x, still: true

@@ -197,6 +197,19 @@ function browserStore() {
     paintSlot('agentic', act.text);
     paintSlot('regenerative', regenerative(function () { return note + '\n' + act.text; }));
     paintSlot('persistent', keepRow(browserStore(), { id: NAME, repos: mine.length, strokes: strokes, act: act.act }));
+    const pairLetter = mirrorLetter(letter);
+    const pairCubit = cubits().find(function (c) { return c.letter === pairLetter; });
+    if (!pairCubit) throw Error('mirror pair');
+    const pairRepos = buckets[pairCubit.letter].length;
+    const pairStrokes = (hosts.hall[pairCubit.letter] || 0) + (hosts.account[pairCubit.letter] || 0);
+    const mirror = mirrorLine(
+      { name: NAME, letter: letter, repos: mine.length, strokes: strokes },
+      { name: pairCubit.name, letter: pairCubit.letter, repos: pairRepos, strokes: pairStrokes }
+    );
+    paintSlot('mirror', mirror.text);
+    mirrorCheck(mirror, { repos: pairRepos, strokes: pairStrokes });
+    const mirrorLink = document.querySelector('#life a[href="' + pairCubit.slug + '.html"]');
+    if (!mirrorLink || mirrorLink.textContent !== pairCubit.name) throw Error('mirror pair');
     const regen = document.getElementById('regen');
     if (!regen) throw Error('regen missing');
     regen.addEventListener('click', function () {
@@ -207,6 +220,11 @@ function browserStore() {
         const act2 = agenticCubit(measure);
         if (document.getElementById('critique').textContent !== note2) throw Error('regenerative drift');
         if (document.getElementById('agentic').textContent !== act2.text) throw Error('regenerative drift');
+        const mirror2 = mirrorLine(
+          { name: NAME, letter: letter, repos: mine.length, strokes: strokes },
+          { name: pairCubit.name, letter: pairCubit.letter, repos: pairRepos, strokes: pairStrokes }
+        );
+        if (document.getElementById('mirror').textContent !== mirror2.text) throw Error('regenerative drift');
         const next = document.querySelector('#v3 canvas');
         if (!next || next.width < 1) throw Error('regenerative drift');
         paintSlot('regenerative', regenerative(function () { return note2 + '\n' + act2.text; }));

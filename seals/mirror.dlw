@@ -1,0 +1,1 @@
+{"slug":"mirror","seal":"de9fae25f4ca99e225a2da1262909a11ab144909ce4a1cd16c35689a549487da","rule":"sha256(name|slug|blurb)","write":"if-missing"}

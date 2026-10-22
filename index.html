@@ -53,10 +53,11 @@ button{font:inherit;letter-spacing:.12em;text-transform:uppercase;background:tra
 <body>
 <div id="wrap">
 <h1>Cubits</h1>
-<div id="sub">analytical · <b>neon</b> · agentic · regenerative · persistent · AaaA through ZzzZ · 0root.ai · davidwise01</div>
+<div id="sub">analytical · <b>neon</b> · agentic · regenerative · persistent · mirror · AaaA through ZzzZ · 0root.ai · davidwise01</div>
 <div id="stage">
 <div class="panel neon"><h2>neon</h2><p class="label">{{ act || react || change }} · the shelf</p>
 <p id="formula">{{ AaaA, BbbB, CccC, DddD, EeeE, FffF, GggG, HhhH, IiiI, JjjJ, KkkK, LllL, MmmM, NnnN, OooO, PppP, QqqQ, RrrR, SssS, TttT, UuuU, VvvV, WwwW, XxxX, YyyY, ZzzZ }}</p>
+<p class="kicker"><a href="mirror.html">mirror hallway</a></p>
 <div class="grid" id="cards">
 <a class="card" href="aaa-a.html"><b>AaaA</b><i>letter a</i></a>
 <a class="card" href="bbb-b.html"><b>BbbB</b><i>letter b</i></a>
@@ -96,6 +97,8 @@ button{font:inherit;letter-spacing:.12em;text-transform:uppercase;background:tra
 <h2>agentic</h2><p id="agentic">checking…</p>
 <h2>regenerative</h2><p id="regenerative">checking…</p>
 <h2>persistent</h2><p id="persistent">checking…</p>
+<h2>mirror</h2><p id="mirror">checking…</p>
+<p><a href="mirror.html">Open the mirror hallway</a></p>
 <p><span class="tag amber">AMBER</span> The kept row lives in this browser. It is not the sealed list. A row that disagrees with a fresh read throws.</p>
 <p><span class="tag model">MODEL</span> Regenerate grows the picture again from the same count. The second growth has to match the first.</p>
 </section>
@@ -169,6 +172,12 @@ async function sha(t){
       get:function(){ return localStorage.getItem(KEPT); },
       set:function(v){ try{ localStorage.setItem(KEPT, v); }catch(err){ throw Error('persistent book'); } }
     }, {id:'cubits', repos:repos, strokes:strokes, act:act.act}));
+    const rows=cubits().map(function(c){
+      return {name:c.name, letter:c.letter, repos:buckets[c.letter].length, strokes:(hosts.hall[c.letter]||0)+(hosts.account[c.letter]||0)};
+    });
+    const hallMirror=mirrorHall(rows);
+    if(hallMirror.repos!==repos||hallMirror.strokes!==strokes||hallMirror.act!=='mirror') throw Error('mirror drift');
+    paintSlot('mirror', hallMirror.text);
     const regen=document.getElementById('regen');
     if(!regen) throw Error('regen missing');
     regen.addEventListener('click', function(){
@@ -180,6 +189,8 @@ async function sha(t){
         const act2=agenticShelf({cards:26, fullest:ends.fullest, thinnest:ends.thinnest});
         if(document.getElementById('critique').textContent!==note2) throw Error('regenerative drift');
         if(document.getElementById('agentic').textContent!==act2.text) throw Error('regenerative drift');
+        const hall2=mirrorHall(rows);
+        if(document.getElementById('mirror').textContent!==hall2.text) throw Error('regenerative drift');
         paintSlot('regenerative', regenerative(function(){ return note2+'\n'+act2.text; }));
       }catch(err){
         paint('FAIL '+err.message, true);
